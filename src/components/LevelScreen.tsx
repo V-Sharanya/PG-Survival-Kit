@@ -51,13 +51,16 @@ const LevelScreen = ({ level, levelNumber, onNext }: LevelScreenProps) => {
     localStorage.setItem(level.key, JSON.stringify(checkedItems));
   }, [checkedItems, level.key]);
 
-  const toggleItem = (item: string) => {
+  const toggleItem = (itemName: string) => {
     setCheckedItems((prev) =>
-      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
+      prev.includes(itemName) ? prev.filter((i) => i !== itemName) : [...prev, itemName]
     );
   };
 
+  const requiredItems = level.items.filter((i) => !i.optional);
+  const requiredChecked = requiredItems.filter((i) => checkedItems.includes(i.name)).length;
   const progress = Math.round((checkedItems.length / level.items.length) * 100);
+  const canProceed = requiredItems.every((i) => checkedItems.includes(i.name));
   const t = themeConfig[level.theme];
 
   return (
@@ -115,48 +118,60 @@ const LevelScreen = ({ level, levelNumber, onNext }: LevelScreenProps) => {
         {/* Items grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
           {level.items.map((item, i) => {
-            const isChecked = checkedItems.includes(item);
+            const isChecked = checkedItems.includes(item.name);
             return (
               <motion.div
-                key={item}
+                key={item.name}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * i }}
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => toggleItem(item)}
-                className={`cursor-pointer p-5 rounded-xl border text-center font-body font-medium text-sm transition-all duration-300 select-none
+                onClick={() => toggleItem(item.name)}
+                className={`relative cursor-pointer p-5 rounded-xl border text-center font-body font-medium text-sm transition-all duration-300 select-none
                   ${
                     isChecked
                       ? "bg-checked/20 border-checked/50 box-glow-checked text-foreground"
                       : `${t.card} ${t.border} hover:border-opacity-60 text-muted-foreground`
-                  }`}
+                  }
+                  ${item.optional && !isChecked ? "border-dashed" : ""}`}
               >
+                {/* Optional badge */}
+                {item.optional && (
+                  <span className="absolute top-2 right-2 text-[10px] font-display uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-full border border-border">
+                    Buy Later
+                  </span>
+                )}
+                {/* Emoji background */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-[0.07] text-6xl pointer-events-none select-none">
+                  {item.emoji}
+                </div>
+
                 <AnimatePresence mode="wait">
                   {isChecked ? (
                     <motion.div
                       key="checked"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="mb-1 text-2xl"
+                      className="mb-1 text-2xl relative z-10"
                     >
                       ✅
                     </motion.div>
                   ) : (
                     <motion.div
                       key="unchecked"
-                      className="mb-1 text-2xl opacity-30"
+                      className="mb-1 text-2xl relative z-10"
                     >
-                      📦
+                      {item.emoji}
                     </motion.div>
                   )}
                 </AnimatePresence>
-                {item}
+                 <span className="relative z-10">{item.name}</span>
                 {isChecked && (
                   <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="text-xs text-primary mt-1 font-display"
+                    className="text-xs text-primary mt-1 font-display relative z-10"
                   >
                     ACQUIRED
                   </motion.p>
@@ -168,13 +183,19 @@ const LevelScreen = ({ level, levelNumber, onNext }: LevelScreenProps) => {
 
         {/* Next level button */}
         <AnimatePresence>
-          {progress === 100 && (
+          {canProceed && (
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 30 }}
               className="mt-12 text-center"
             >
+              {!level.items.every((i) => checkedItems.includes(i.name)) && (
+                <p className="text-xs text-muted-foreground font-body mb-3">
+                  Optional items can be bought later — you're good to go!
+                </p>
+              )}
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

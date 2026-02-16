@@ -50,7 +50,7 @@ const WelcomeScreen = ({ onStart }: WelcomeScreenProps) => {
           transition={{ duration: 0.6, delay: 0.7 }}
           className="text-sm font-body text-muted-foreground mb-10"
         >
-          3 levels. 18 items. Are you ready?
+          Are you ready?
         </motion.p>
 
         <motion.button
@@ -72,7 +72,7 @@ const WelcomeScreen = ({ onStart }: WelcomeScreenProps) => {
           transition={{ delay: 1.2, duration: 1 }}
           className="mt-16 flex gap-3"
         >
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3, 4, 5, 6, 7].map((i) => (
             <div
               key={i}
               className="w-3 h-3 rounded-full bg-primary/30 border border-primary/50"
