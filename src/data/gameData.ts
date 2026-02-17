@@ -67,7 +67,8 @@ export const levels: LevelData[] = [
       { name: "Extension Board", emoji: "🔌" },
       { name: "Water Bottle", emoji: "💧" },
       { name: "Laundry Detergent", emoji: "🧼" },
-      { name: "Iron Box", emoji: "👔", optional: true }
+      { name: "Iron Box", emoji: "👔", optional: true },
+      { name: "Tissues & Newspaper", emoji: "📰", optional: true },
     ],
     icon: level3Icon,
     theme: "level3",
@@ -124,10 +125,15 @@ export const levels: LevelData[] = [
   },
   {
     key: "level7",
-    title: "Electronics Essentials",
+    title: "Electronics & Kitchen Essentials",
     subtitle: "Very Very Important for PG life.",
     items: [
       { name: "Charger(Phone, Laptop, Pods)", emoji: "🔌" },
+      { name: "Spoons(2 forks & 2 spoons)", emoji: "🥄" },
+      { name: "Plates(2)", emoji: "🍽️" },
+      { name: "Bowls(1)", emoji: "🍜", optional:true },
+      { name: "Mugs(1)", emoji: "☕",optional:true },
+      { name: "Knife", emoji: "🔪", optional: true },
     ],
     icon: level7Icon,
     theme: "level1",
